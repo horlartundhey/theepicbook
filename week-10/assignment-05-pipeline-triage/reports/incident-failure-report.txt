@@ -1,0 +1,59 @@
+==============================================================
+ EPICBOOK PIPELINE HEALTH REPORT
+ Prepared by : Ibitoye Olatunde
+ Generated   : 2026-11-25 12:21:17 UTC
+ Organization: https://dev.azure.com/olatundeibitoye
+ Project     : EpicBook-Deployment
+==============================================================
+
+--- Infrastructure Pipeline (pipeline ID 4) ---
+  Pipeline name : Epicbook-infra-pipeline
+  Pipeline ID   : 4
+  Run ID        : 12
+  Run number    : 20261125.2
+  Branch        : main
+  Status        : completed
+  Result        : succeeded
+  Finished      : 2026-11-25T10:05:58.591853+00:00
+  Logs saved    : reports/infra-last-run.log
+  Check result  : PASS
+  Log warnings  : 0 (informational)
+
+--- Application Pipeline (pipeline ID 5) ---
+  Pipeline name : Epicbook-App-Pipeline
+  Pipeline ID   : 5
+  Run ID        : 19
+  Run number    : 20261125.7
+  Branch        : drill/pipeline-failure
+  Status        : completed
+  Result        : failed
+  Finished      : 2026-11-25T12:16:12.807428+00:00
+  Logs saved    : reports/app-last-run.log
+  Check result  : FAIL
+  Failed step(s):
+    Stage  Validate Ansible (failed)
+    Task   Install Node dependencies (npm ci) (failed)
+    Job    validate (failed)
+  Category checks:
+    [  -  ] Agent availability / timeout / queue
+    [MATCH] Dependency installation (18 line(s))
+    [  -  ] Build / compilation
+    [  -  ] Test
+    [  -  ] Authentication / authorization / SSH
+    [  -  ] Terraform infrastructure
+    [  -  ] Ansible / Nginx / deployment
+  Most likely category: Dependency installation
+  Evidence (sanitized):
+    2026-11-25T12:15:59.3388407Z npm ERR! code E404
+    2026-11-25T12:15:59.3416209Z npm ERR! 404 Not Found - GET https://registry.npmjs.org/not-a-real-package-xyz - Not found
+    2026-11-25T12:15:59.3433319Z npm ERR! 404 
+    2026-11-25T12:15:59.3438954Z npm ERR! 404  'not-a-real-package-xyz@1.0.0' is not in this registry.
+    2026-11-25T12:15:59.3439454Z npm ERR! 404 
+    2026-11-25T12:15:59.3452645Z npm ERR! 404 Note that you can also install from a
+
+==============================================================
+ Summary : PASS=1  WARN=0  FAIL=1  ERROR=0
+ Overall Status: FAILED
+ Exit code     : 2  (0 healthy, 1 warning, 2 failure, 3 error)
+ Prepared by    : Ibitoye Olatunde
+==============================================================

@@ -1,0 +1,685 @@
+===== console log 1 =====
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    exclude:
+    - week-10/*
+pool:
+  name: SelfHostedPool
+variables:
+[REDACTED: line matched a sensitive-data pattern]
+stages:
+- stage: Validate
+  displayName: Validate Ansible
+  jobs:
+  - job: validate
+    steps:
+    - task: 6d15af64-176c-496d-b583-fd2ae21d4df4@1
+      inputs:
+        repository: self
+    - task: CmdLine@2
+      displayName: Install Node dependencies (npm ci)
+      inputs:
+        script: |
+          node --version
+          npm ci --omit=dev --no-audit --no-fund
+    - task: DownloadSecureFile@1
+      name: sshKey
+      displayName: Download SSH key from Secure Files
+      inputs:
+        secureFile: epicbook-key
+    - task: CmdLine@2
+      displayName: Restrict key permissions
+      inputs:
+        script: chmod 600 "$(sshKey.secureFilePath)"
+    - task: CmdLine@2
+      displayName: Syntax check and SSH connectivity
+      env:
+        ANSIBLE_DEPRECATION_WARNINGS: 'false'
+      inputs:
+        script: |
+          ansible-galaxy collection install -r ansible/requirements.yml
+          ansible-playbook -i ansible/inventory/hosts.ini ansible/site.yml --syntax-check
+[REDACTED: line matched a sensitive-data pattern]
+- stage: Deploy
+  displayName: Deploy EpicBook
+  dependsOn:
+  - Validate
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  jobs:
+  - job: deploy
+    steps:
+    - task: 6d15af64-176c-496d-b583-fd2ae21d4df4@1
+      inputs:
+        repository: self
+    - task: DownloadSecureFile@1
+      name: sshKey
+      displayName: Download SSH key from Secure Files
+      inputs:
+        secureFile: epicbook-key
+    - task: CmdLine@2
+      displayName: Restrict key permissions
+      inputs:
+        script: chmod 600 "$(sshKey.secureFilePath)"
+    - task: CmdLine@2
+      displayName: Run Ansible playbook
+      env:
+[REDACTED: line matched a sensitive-data pattern]
+        ANSIBLE_DEPRECATION_WARNINGS: 'false'
+        ANSIBLE_FORCE_COLOR: 'false'
+      inputs:
+        script: |
+[REDACTED: line matched a sensitive-data pattern]
+
+
+===== console log 2 =====
+Template Parameters:
+Begin evaluating template '/azure-pipelines.yml'
+Begin transform: step
+Evaluating: eq(value['checkout'], 'none')
+Expanded: eq('self', 'none')
+Result: False
+Evaluating: ne(value['checkout'], 'none')
+Expanded: ne('self', 'none')
+Result: True
+Evaluating: transform('stepToTaskBaseProperties', value)
+Evaluating: arg0
+Result: Object
+Evaluating: in(pair['key'], 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Expanded: in('checkout', 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Result: False
+Result: Object
+Evaluating: value['checkout']
+Result: 'self'
+Evaluating: value
+Result: Object
+Evaluating: in(pair['key'], 'clean', 'fetchDepth', 'fetchFilter', 'fetchTags', 'lfs', 'persistCredentials', 'submodules', 'path', 'workspaceRepo', 'sparseCheckoutDirectories', 'sparseCheckoutPatterns')
+Expanded: in('checkout', 'clean', 'fetchDepth', 'fetchFilter', 'fetchTags', 'lfs', 'persistCredentials', 'submodules', 'path', 'workspaceRepo', 'sparseCheckoutDirectories', 'sparseCheckoutPatterns')
+Result: False
+End transform: step
+Begin transform: step
+Evaluating: transform('stepToTaskBaseProperties', value)
+Evaluating: arg0
+Result: Object
+Evaluating: in(pair['key'], 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Expanded: in('script', 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Result: False
+Evaluating: in(pair['key'], 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Expanded: in('displayName', 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Result: True
+Evaluating: pair['key']
+Result: 'displayName'
+Evaluating: pair['value']
+Result: 'Install Node dependencies (npm ci)'
+Result: Object
+Evaluating: value['script']
+Result: 'node --version
+npm ci --omit=dev --no-audit --no-fund
+'
+Evaluating: value['failOnStderr']
+Expanded: Null
+Result: False
+Evaluating: value['workingDirectory']
+Expanded: Null
+Result: False
+End transform: step
+Begin transform: step
+Evaluating: transform('stepToTaskBaseProperties', value)
+Evaluating: arg0
+Result: Object
+Evaluating: in(pair['key'], 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Expanded: in('script', 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Result: False
+Evaluating: in(pair['key'], 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Expanded: in('displayName', 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Result: True
+Evaluating: pair['key']
+Result: 'displayName'
+Evaluating: pair['value']
+Result: 'Restrict key permissions'
+Result: Object
+Evaluating: value['script']
+Result: 'chmod 600 "$(sshKey.secureFilePath)"'
+Evaluating: value['failOnStderr']
+Expanded: Null
+Result: False
+Evaluating: value['workingDirectory']
+Expanded: Null
+Result: False
+End transform: step
+Begin transform: step
+Evaluating: transform('stepToTaskBaseProperties', value)
+Evaluating: arg0
+Result: Object
+Evaluating: in(pair['key'], 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Expanded: in('script', 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Result: False
+Evaluating: in(pair['key'], 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Expanded: in('displayName', 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Result: True
+Evaluating: pair['key']
+Result: 'displayName'
+Evaluating: pair['value']
+Result: 'Syntax check and SSH connectivity'
+Evaluating: in(pair['key'], 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Expanded: in('env', 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Result: True
+Evaluating: pair['key']
+Result: 'env'
+Evaluating: pair['value']
+Result: Object
+Result: Object
+Evaluating: value['script']
+Result: 'ansible-galaxy collection install -r ansible/requirements.yml
+ansible-playbook -i ansible/inventory/hosts.ini ansible/site.yml --syntax-check
+[REDACTED: line matched a sensitive-data pattern]
+'
+Evaluating: value['failOnStderr']
+Expanded: Null
+Result: False
+Evaluating: value['workingDirectory']
+Expanded: Null
+Result: False
+End transform: step
+Begin transform: jobDependsOn
+Evaluating: value
+Expanded: 'Validate'
+Result: True
+Evaluating: value
+Result: 'Validate'
+End transform: jobDependsOn
+Begin transform: step
+Evaluating: eq(value['checkout'], 'none')
+Expanded: eq('self', 'none')
+Result: False
+Evaluating: ne(value['checkout'], 'none')
+Expanded: ne('self', 'none')
+Result: True
+Evaluating: transform('stepToTaskBaseProperties', value)
+Evaluating: arg0
+Result: Object
+Evaluating: in(pair['key'], 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Expanded: in('checkout', 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Result: False
+Result: Object
+Evaluating: value['checkout']
+Result: 'self'
+Evaluating: value
+Result: Object
+Evaluating: in(pair['key'], 'clean', 'fetchDepth', 'fetchFilter', 'fetchTags', 'lfs', 'persistCredentials', 'submodules', 'path', 'workspaceRepo', 'sparseCheckoutDirectories', 'sparseCheckoutPatterns')
+Expanded: in('checkout', 'clean', 'fetchDepth', 'fetchFilter', 'fetchTags', 'lfs', 'persistCredentials', 'submodules', 'path', 'workspaceRepo', 'sparseCheckoutDirectories', 'sparseCheckoutPatterns')
+Result: False
+End transform: step
+Begin transform: step
+Evaluating: transform('stepToTaskBaseProperties', value)
+Evaluating: arg0
+Result: Object
+Evaluating: in(pair['key'], 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Expanded: in('script', 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Result: False
+Evaluating: in(pair['key'], 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Expanded: in('displayName', 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Result: True
+Evaluating: pair['key']
+Result: 'displayName'
+Evaluating: pair['value']
+Result: 'Restrict key permissions'
+Result: Object
+Evaluating: value['script']
+Result: 'chmod 600 "$(sshKey.secureFilePath)"'
+Evaluating: value['failOnStderr']
+Expanded: Null
+Result: False
+Evaluating: value['workingDirectory']
+Expanded: Null
+Result: False
+End transform: step
+Begin transform: step
+Evaluating: transform('stepToTaskBaseProperties', value)
+Evaluating: arg0
+Result: Object
+Evaluating: in(pair['key'], 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Expanded: in('script', 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Result: False
+Evaluating: in(pair['key'], 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Expanded: in('displayName', 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Result: True
+Evaluating: pair['key']
+Result: 'displayName'
+Evaluating: pair['value']
+Result: 'Run Ansible playbook'
+Evaluating: in(pair['key'], 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Expanded: in('env', 'condition', 'continueOnError', 'displayName', 'target', 'enabled', 'env', 'name', 'timeoutInMinutes', 'retryCountOnTaskFailure')
+Result: True
+Evaluating: pair['key']
+Result: 'env'
+Evaluating: pair['value']
+Result: Object
+Result: Object
+Evaluating: value['script']
+[REDACTED: line matched a sensitive-data pattern]
+'
+Evaluating: value['failOnStderr']
+Expanded: Null
+Result: False
+Evaluating: value['workingDirectory']
+Expanded: Null
+Result: False
+End transform: step
+Finished evaluating template '/azure-pipelines.yml'
+Load Time: 00:00:00.0080509
+Estimated Memory: 20,346 bytes (Max: 20,971,520)
+Parser Event Count: 990 (Max: 10,000,000)
+Greatest Parser Depth: 16 (Max: 100)
+File Count: 1 (Max: 100)
+Greatest File Size: 2,053 (Max: 1,048,576)
+
+===== console log 3 =====
+2026-11-25T12:27:19.1848936Z ##[section]Starting: Prepare job validate
+2026-11-25T12:27:19.2086614Z Variables:
+2026-11-25T12:27:19.2086614Z ContinueOnError: False
+2026-11-25T12:27:19.2086614Z TimeoutInMinutes: 60
+2026-11-25T12:27:19.2086614Z CancelTimeoutInMinutes: 5
+2026-11-25T12:27:19.2086614Z Expand:
+2026-11-25T12:27:19.2086614Z   MaxConcurrency: 0
+2026-11-25T12:27:19.2224668Z   ########## System Pipeline Decorator(s) ##########
+
+2026-11-25T12:27:19.2224668Z   Begin evaluating template 'system-pre-steps.yml'
+Evaluating: eq('true', variables['system.debugContext'])
+Expanded: eq('true', Null)
+Result: False
+Evaluating: resources['repositories']['self']
+Expanded: Object
+Result: True
+Evaluating: not(containsValue(job['steps']['*']['task']['id'], '6d15af64-176c-496d-b583-fd2ae21d4df4'))
+Expanded: not(containsValue(Object, '6d15af64-176c-496d-b583-fd2ae21d4df4'))
+Result: False
+Finished evaluating template 'system-pre-steps.yml'
+********************************************************************************
+Template and static variable resolution complete. Final runtime YAML document:
+steps: []
+
+
+2026-11-25T12:27:19.2224668Z   MaxConcurrency: 0
+2026-11-25T12:27:19.2284904Z ##[section]Finishing: Prepare job validate
+
+===== console log 4 =====
+2026-11-25T12:27:29.3740635Z ##[section]Starting: Initialize job
+2026-11-25T12:27:29.3746145Z Agent name: 'ubuntu-agent-1'
+2026-11-25T12:27:29.3747662Z Agent machine name: 'ip-172-31-43-84'
+2026-11-25T12:27:29.3748365Z Current agent version: '5.282.0'
+2026-11-25T12:27:31.2751541Z Agent running as: 'ubuntu'
+2026-11-25T12:27:31.2798447Z Prepare build directory.
+2026-11-25T12:27:31.3086875Z Set build variables.
+2026-11-25T12:27:31.3104023Z Download all required tasks.
+2026-11-25T12:27:32.2289222Z Checking job knob settings.
+2026-11-25T12:27:32.2291349Z    Knob: DockerActionRetries = true Source: $(VSTSAGENT_DOCKER_ACTION_RETRIES) 
+2026-11-25T12:27:32.2292549Z    Knob: UseGitLongPaths = true Source: $(USE_GIT_LONG_PATHS) 
+2026-11-25T12:27:32.2293621Z    Knob: UseNode24withHandlerData = True Source: $(DistributedTask.Agent.UseNode24withHandlerData) 
+2026-11-25T12:27:32.2295042Z    Knob: EnableIssueSourceValidation = true Source: $(ENABLE_ISSUE_SOURCE_VALIDATION) 
+2026-11-25T12:27:32.2295694Z    Knob: AgentEnablePipelineArtifactLargeChunkSize = true Source: $(AGENT_ENABLE_PIPELINEARTIFACT_LARGE_CHUNK_SIZE) 
+2026-11-25T12:27:32.2297412Z    Knob: ContinueAfterCancelProcessTreeKillAttempt = true Source: $(VSTSAGENT_CONTINUE_AFTER_CANCEL_PROCESSTREEKILL_ATTEMPT) 
+2026-11-25T12:27:32.2297908Z    Knob: ProcessHandlerSecureArguments = true Source: $(AZP_75787_ENABLE_NEW_LOGIC) 
+2026-11-25T12:27:32.2298207Z    Knob: ProcessHandlerSecureArguments = false Source: $(AZP_75787_ENABLE_NEW_LOGIC_LOG) 
+2026-11-25T12:27:32.2298522Z    Knob: ProcessHandlerTelemetry = true Source: $(AZP_75787_ENABLE_COLLECT) 
+2026-11-25T12:27:32.2299094Z    Knob: ProcessHandlerEnableNewLogic = true Source: $(AZP_75787_ENABLE_NEW_PH_LOGIC) 
+2026-11-25T12:27:32.2299766Z    Knob: EnableResourceMonitorDebugOutput = true Source: $(AZP_ENABLE_RESOURCE_MONITOR_DEBUG_OUTPUT) 
+2026-11-25T12:27:32.2300105Z    Knob: EnableResourceUtilizationWarnings = true Source: $(AZP_ENABLE_RESOURCE_UTILIZATION_WARNINGS) 
+2026-11-25T12:27:32.2300653Z    Knob: IgnoreVSTSTaskLib = true Source: $(AZP_AGENT_IGNORE_VSTSTASKLIB) 
+2026-11-25T12:27:32.2300952Z    Knob: FailJobWhenAgentDies = true Source: $(FAIL_JOB_WHEN_AGENT_DIES) 
+2026-11-25T12:27:32.2301162Z    Knob: EnhancedWorkerCrashHandling = true Source: ${AZP_ENHANCED_WORKER_CRASH_HANDLING} 
+2026-11-25T12:27:32.2301567Z    Knob: CheckForTaskDeprecation = true Source: $(AZP_AGENT_CHECK_FOR_TASK_DEPRECATION) 
+2026-11-25T12:27:32.2302012Z    Knob: CheckIfTaskNodeRunnerIsDeprecated246 = True Source: $(DistributedTask.Agent.CheckIfTaskNodeRunnerIsDeprecated246) 
+2026-11-25T12:27:32.2302478Z    Knob: UseNode20ToStartContainer = True Source: $(DistributedTask.Agent.UseNode20ToStartContainer) 
+2026-11-25T12:27:32.2302817Z    Knob: UseNode24ToStartContainer = True Source: $(DistributedTask.Agent.UseNode24ToStartContainer) 
+2026-11-25T12:27:32.2303183Z    Knob: EnableTimeoutLogFlushing = True Source: $(DistributedTask.Agent.EnableTimeoutLogFlushing) 
+2026-11-25T12:27:32.2303677Z    Knob: LogTaskNameInUserAgent = true Source: $(AZP_AGENT_LOG_TASKNAME_IN_USERAGENT) 
+2026-11-25T12:27:32.2304040Z    Knob: UseFetchFilterInCheckoutTask = true Source: $(AGENT_USE_FETCH_FILTER_IN_CHECKOUT_TASK) 
+2026-11-25T12:27:32.2304394Z    Knob: UseFetchFilterInGitSubmoduleUpdate = True Source: $(DistributedTask.Agent.UseFetchFilterInGitSubmoduleUpdate) 
+2026-11-25T12:27:32.2304903Z    Knob: CaseInsensitiveArtifactMatchingFixEnabled = True Source: $(DistributedTask.Agent.CaseInsensitiveArtifactMatchingFixEnabled) 
+2026-11-25T12:27:32.2305347Z    Knob: Rosetta2Warning = true Source: $(ROSETTA2_WARNING) 
+2026-11-25T12:27:32.2306411Z    Knob: AddForceCredentialsToGitCheckoutEnhanced = True Source: $(DistributedTask.Agent.AddForceCredentialsToGitCheckoutEnhanced) 
+2026-11-25T12:27:32.2307159Z    Knob: UseLatestTfExe = True Source: $(DistributedTask.Agent.UseLatestTfExe) 
+2026-11-25T12:27:32.2307497Z    Knob: UseSparseCheckoutInCheckoutTask = true Source: $(AGENT_USE_SPARSE_CHECKOUT_IN_CHECKOUT_TASK) 
+2026-11-25T12:27:32.2307937Z    Knob: AgentCDNConnectivityFailWarning = False Source: $(DistributedTask.Agent.AgentCDNConnectivityFailWarning) 
+2026-11-25T12:27:32.2308686Z    Knob: UseEnhancedLogging = true Source: ${AZP_USE_ENHANCED_LOGGING} 
+2026-11-25T12:27:32.2309040Z    Knob: EnableEnhancedContainerDiagnostics = True Source: $(DistributedTask.Agent.EnableEnhancedContainerDiagnostics) 
+2026-11-25T12:27:32.2309415Z    Knob: EnableDockerExecDiagnostics = True Source: $(DistributedTask.Agent.EnableDockerExecDiagnostics) 
+2026-11-25T12:27:32.2310254Z    Knob: UseEnhancedNodeSelection = True Source: $(DistributedTask.Agent.UseEnhancedNodeSelection) 
+2026-11-25T12:27:32.2311172Z    Knob: EnablePluginExternalOutputFiltering = True Source: $(DistributedTask.Agent.EnablePluginExternalOutputFiltering) 
+2026-11-25T12:27:32.2311382Z Finished checking job knob settings.
+2026-11-25T12:27:32.2728285Z Start tracking orphan processes.
+2026-11-25T12:27:32.2851804Z ##[section]Finishing: Initialize job
+
+===== console log 5 =====
+2026-11-25T12:27:32.3135225Z ##[section]Starting: Download SSH key from Secure Files
+2026-11-25T12:27:32.3253355Z ==============================================================================
+2026-11-25T12:27:32.3254332Z Task         : Download secure file
+2026-11-25T12:27:32.3254784Z Description  : Download a secure file to the agent machine
+2026-11-25T12:27:32.3254910Z Version      : 1.281.1
+2026-11-25T12:27:32.3255235Z Author       : Microsoft Corporation
+2026-11-25T12:27:32.3255585Z Help         : https://docs.microsoft.com/azure/devops/pipelines/tasks/utility/download-secure-file
+2026-11-25T12:27:32.3255727Z ==============================================================================
+2026-11-25T12:27:36.1040805Z [Host] Selected Node version: Node24 (Strategy: Node24Strategy)
+2026-11-25T12:27:36.7739839Z ##[section]Finishing: Download SSH key from Secure Files
+
+===== console log 6 =====
+2026-11-25T12:27:36.7787288Z ##[section]Starting: Checkout horlartundhey/theepicbook@drill/pipeline-failure to s
+2026-11-25T12:27:36.7801016Z ==============================================================================
+2026-11-25T12:27:36.7801182Z Task         : Get sources
+2026-11-25T12:27:36.7801280Z Description  : Get sources from a repository. Supports Git, TfsVC, and SVN repositories.
+2026-11-25T12:27:36.7801402Z Version      : 1.0.0
+2026-11-25T12:27:36.7801497Z Author       : Microsoft
+2026-11-25T12:27:36.7802025Z Help         : [More Information](https://go.microsoft.com/fwlink/?LinkId=798199)
+2026-11-25T12:27:36.7802170Z ==============================================================================
+2026-11-25T12:27:38.5853332Z Syncing repository: horlartundhey/theepicbook (GitHub)
+2026-11-25T12:27:38.5859863Z ##[command]git version
+2026-11-25T12:27:38.5866309Z git version 2.53.0
+2026-11-25T12:27:38.5867726Z ##[command]git config --get remote.origin.url
+2026-11-25T12:27:38.5876439Z ##[command]git clean -ffdx
+2026-11-25T12:27:38.5883777Z ##[command]git reset --hard HEAD
+2026-11-25T12:27:38.5889103Z HEAD is now at a71eb60 drill: invalid dependency for pipeline-triage assignment (do not merge)
+2026-11-25T12:27:38.5891487Z ##[command]git sparse-checkout disable
+2026-11-25T12:27:38.5910025Z ##[command]git config gc.auto 0
+2026-11-25T12:27:38.5919219Z ##[command]git config core.longpaths true
+2026-11-25T12:27:38.5928310Z ##[command]git config --get-all http.https://github.com/horlartundhey/theepicbook.extraheader
+2026-11-25T12:27:38.5937493Z ##[command]git config --get-all http.extraheader
+2026-11-25T12:27:38.5946824Z ##[command]git config --get-regexp .*extraheader
+2026-11-25T12:27:38.5956093Z ##[command]git config --get-all http.proxy
+2026-11-25T12:27:38.5965715Z ##[command]git config http.version HTTP/1.1
+2026-11-25T12:27:38.5979072Z ##[command]git config --get-all remote.origin.promisor
+2026-11-25T12:27:38.5989158Z ##[command]git config --get-all remote.origin.partialclonefilter
+2026-11-25T12:27:38.6001639Z ##[command]git --config-env=http.extraheader=env_var_http.extraheader fetch --force --tags --prune --prune-tags --progress --no-recurse-submodules origin --depth=1  +14890e3b6f8c96646f09edfc48dfc707091e8ebb:refs/remotes/origin/14890e3b6f8c96646f09edfc48dfc707091e8ebb
+2026-11-25T12:27:38.6008970Z remote: Enumerating objects: 5, done.        
+2026-11-25T12:27:38.6009332Z remote: Counting objects:  20% (1/5)        
+2026-11-25T12:27:38.6009648Z remote: Counting objects:  40% (2/5)        
+2026-11-25T12:27:38.6009887Z remote: Counting objects:  60% (3/5)        
+2026-11-25T12:27:38.6010253Z remote: Counting objects:  80% (4/5)        
+2026-11-25T12:27:38.6010508Z remote: Counting objects: 100% (5/5)        
+2026-11-25T12:27:38.6010819Z remote: Counting objects: 100% (5/5), done.        
+2026-11-25T12:27:38.6011084Z remote: Compressing objects:  50% (1/2)        
+2026-11-25T12:27:38.6011378Z remote: Compressing objects: 100% (2/2)        
+2026-11-25T12:27:38.6011702Z remote: Compressing objects: 100% (2/2), done.        
+2026-11-25T12:27:38.6012040Z remote: Total 3 (delta 2), reused 2 (delta 1), pack-reused 0 (from 0)        
+2026-11-25T12:27:38.6012479Z From https://github.com/horlartundhey/theepicbook
+2026-11-25T12:27:38.6012930Z  * [new ref]         14890e3b6f8c96646f09edfc48dfc707091e8ebb -> origin/14890e3b6f8c96646f09edfc48dfc707091e8ebb
+2026-11-25T12:27:39.8990843Z ##[command]git --config-env=http.extraheader=env_var_http.extraheader fetch --force --tags --prune --prune-tags --progress --no-recurse-submodules origin --depth=1  +14890e3b6f8c96646f09edfc48dfc707091e8ebb
+2026-11-25T12:27:39.9000556Z remote: Total 0 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)        
+2026-11-25T12:27:39.9001016Z From https://github.com/horlartundhey/theepicbook
+2026-11-25T12:27:39.9001485Z  * branch            14890e3b6f8c96646f09edfc48dfc707091e8ebb -> FETCH_HEAD
+2026-11-25T12:27:40.7668094Z ##[command]git checkout --progress --force refs/remotes/origin/14890e3b6f8c96646f09edfc48dfc707091e8ebb
+2026-11-25T12:27:40.7677709Z Previous HEAD position was a71eb60 drill: invalid dependency for pipeline-triage assignment (do not merge)
+2026-11-25T12:27:40.7678701Z HEAD is now at 14890e3 Revert "drill: invalid dependency for pipeline-triage assignment (do not merge)"
+2026-11-25T12:27:40.7707980Z ##[section]Finishing: Checkout horlartundhey/theepicbook@drill/pipeline-failure to s
+
+===== console log 7 =====
+2026-11-25T12:27:40.7746832Z ##[section]Starting: Install Node dependencies (npm ci)
+2026-11-25T12:27:40.7753572Z ==============================================================================
+2026-11-25T12:27:40.7753727Z Task         : Command line
+2026-11-25T12:27:40.7753804Z Description  : Run a command line script using Bash on Linux and macOS and cmd.exe on Windows
+2026-11-25T12:27:40.7753934Z Version      : 2.281.0
+2026-11-25T12:27:40.7754009Z Author       : Microsoft Corporation
+2026-11-25T12:27:40.7754104Z Help         : https://docs.microsoft.com/azure/devops/pipelines/tasks/utility/command-line
+2026-11-25T12:27:40.7754229Z ==============================================================================
+2026-11-25T12:27:44.1641828Z [Host] Selected Node version: Node24 (Strategy: Node24Strategy)
+2026-11-25T12:27:44.2653150Z Generating script.
+2026-11-25T12:27:44.2713936Z ========================== Starting Command Output ===========================
+2026-11-25T12:27:44.2913874Z [command]/usr/bin/bash --noprofile --norc /home/ubuntu/myagent/_work/_temp/1ebeb9c8-7bf8-414d-a3fb-18a8ecbfb170.sh
+2026-11-25T12:27:44.2995290Z v22.22.1
+2026-11-25T12:27:45.8869412Z npm WARN deprecated debug@4.1.1: Debug versions >=3.2.0 <3.2.7 || >=4 <4.3.1 have a low-severity ReDos regression when used in a Node.js environment. It is recommended you upgrade to 3.2.7 or 4.3.1. (https://github.com/visionmedia/debug/issues/797)
+2026-11-25T12:27:46.6195491Z 
+2026-11-25T12:27:46.6196942Z added 107 packages in 2s
+2026-11-25T12:27:46.6345317Z 
+2026-11-25T12:27:46.6431025Z ##[section]Finishing: Install Node dependencies (npm ci)
+
+===== console log 8 =====
+2026-11-25T12:27:46.6469423Z ##[section]Starting: Restrict key permissions
+2026-11-25T12:27:46.6476356Z ==============================================================================
+2026-11-25T12:27:46.6476493Z Task         : Command line
+2026-11-25T12:27:46.6476580Z Description  : Run a command line script using Bash on Linux and macOS and cmd.exe on Windows
+2026-11-25T12:27:46.6476737Z Version      : 2.281.0
+2026-11-25T12:27:46.6476810Z Author       : Microsoft Corporation
+2026-11-25T12:27:46.6476907Z Help         : https://docs.microsoft.com/azure/devops/pipelines/tasks/utility/command-line
+2026-11-25T12:27:46.6477020Z ==============================================================================
+2026-11-25T12:27:49.9745089Z [Host] Selected Node version: Node24 (Strategy: Node24Strategy)
+2026-11-25T12:27:50.1023345Z Generating script.
+2026-11-25T12:27:50.1026602Z Script contents:
+2026-11-25T12:27:50.1027112Z chmod 600 "/home/ubuntu/myagent/_work/_temp/epicbook-key"
+2026-11-25T12:27:50.1027709Z ========================== Starting Command Output ===========================
+2026-11-25T12:27:50.1040485Z [command]/usr/bin/bash --noprofile --norc /home/ubuntu/myagent/_work/_temp/3e274099-5f1a-477e-8438-dbbdf9ad88b9.sh
+2026-11-25T12:27:50.1288964Z 
+2026-11-25T12:27:50.1364662Z ##[section]Finishing: Restrict key permissions
+
+===== console log 9 =====
+2026-11-25T12:27:50.1410885Z ##[section]Starting: Syntax check and SSH connectivity
+2026-11-25T12:27:50.1419010Z ==============================================================================
+2026-11-25T12:27:50.1419245Z Task         : Command line
+2026-11-25T12:27:50.1419377Z Description  : Run a command line script using Bash on Linux and macOS and cmd.exe on Windows
+2026-11-25T12:27:50.1419602Z Version      : 2.281.0
+2026-11-25T12:27:50.1419729Z Author       : Microsoft Corporation
+2026-11-25T12:27:50.1419889Z Help         : https://docs.microsoft.com/azure/devops/pipelines/tasks/utility/command-line
+2026-11-25T12:27:50.1420086Z ==============================================================================
+2026-11-25T12:27:53.5087916Z [Host] Selected Node version: Node24 (Strategy: Node24Strategy)
+2026-11-25T12:27:53.6021735Z Generating script.
+2026-11-25T12:27:53.6025630Z ========================== Starting Command Output ===========================
+2026-11-25T12:27:53.6035053Z [command]/usr/bin/bash --noprofile --norc /home/ubuntu/myagent/_work/_temp/0732e9bc-c6d4-4eb4-bfc4-c92e5ec7bb4b.sh
+2026-11-25T12:27:54.7907991Z Starting galaxy collection install process
+2026-11-25T12:27:54.7911435Z Nothing to do. All requested collections are already installed. If you want to reinstall them, consider using `--force`.
+2026-11-25T12:27:55.6943136Z 
+2026-11-25T12:27:55.6944281Z playbook: ansible/site.yml
+2026-11-25T12:27:58.1583988Z backend_server | SUCCESS => {
+2026-11-25T12:27:58.1588275Z     "changed": false,
+2026-11-25T12:27:58.1588851Z     "ping": "pong"
+2026-11-25T12:27:58.1589404Z }
+2026-11-25T12:27:58.1590289Z app_server | SUCCESS => {
+2026-11-25T12:27:58.1591011Z     "changed": false,
+2026-11-25T12:27:58.1591615Z     "ping": "pong"
+2026-11-25T12:27:58.1613385Z }
+2026-11-25T12:27:58.2513879Z 
+2026-11-25T12:27:58.2593358Z ##[section]Finishing: Syntax check and SSH connectivity
+
+===== console log 10 =====
+2026-11-25T12:27:58.2633826Z ##[section]Starting: Checkout horlartundhey/theepicbook@drill/pipeline-failure to s
+2026-11-25T12:27:58.2638140Z ==============================================================================
+2026-11-25T12:27:58.2638274Z Task         : Get sources
+2026-11-25T12:27:58.2638366Z Description  : Get sources from a repository. Supports Git, TfsVC, and SVN repositories.
+2026-11-25T12:27:58.2638497Z Version      : 1.0.0
+2026-11-25T12:27:58.2638570Z Author       : Microsoft
+2026-11-25T12:27:58.2638657Z Help         : [More Information](https://go.microsoft.com/fwlink/?LinkId=798199)
+2026-11-25T12:27:58.2638764Z ==============================================================================
+2026-11-25T12:27:59.4439203Z Cleaning any cached credential from repository: horlartundhey/theepicbook (GitHub)
+2026-11-25T12:27:59.4565823Z ##[section]Finishing: Checkout horlartundhey/theepicbook@drill/pipeline-failure to s
+
+===== console log 11 =====
+2026-11-25T12:27:59.4596140Z ##[section]Starting: Finalize Job
+2026-11-25T12:27:59.4610474Z Cleaning up task key
+2026-11-25T12:27:59.4611258Z Start cleaning up orphan processes.
+2026-11-25T12:27:59.5114626Z ##[section]Finishing: Finalize Job
+
+===== console log 12 =====
+2026-11-25T12:27:28.5120923Z ##[section]Starting: validate
+2026-11-25T12:27:29.3740754Z ##[section]Starting: Initialize job
+2026-11-25T12:27:29.3746177Z Agent name: 'ubuntu-agent-1'
+2026-11-25T12:27:29.3747671Z Agent machine name: 'ip-172-31-43-84'
+2026-11-25T12:27:29.3748386Z Current agent version: '5.282.0'
+2026-11-25T12:27:31.2751616Z Agent running as: 'ubuntu'
+2026-11-25T12:27:31.2798488Z Prepare build directory.
+2026-11-25T12:27:31.3086931Z Set build variables.
+2026-11-25T12:27:31.3104061Z Download all required tasks.
+2026-11-25T12:27:32.2289274Z Checking job knob settings.
+2026-11-25T12:27:32.2291368Z    Knob: DockerActionRetries = true Source: $(VSTSAGENT_DOCKER_ACTION_RETRIES) 
+2026-11-25T12:27:32.2292554Z    Knob: UseGitLongPaths = true Source: $(USE_GIT_LONG_PATHS) 
+2026-11-25T12:27:32.2293626Z    Knob: UseNode24withHandlerData = True Source: $(DistributedTask.Agent.UseNode24withHandlerData) 
+2026-11-25T12:27:32.2295047Z    Knob: EnableIssueSourceValidation = true Source: $(ENABLE_ISSUE_SOURCE_VALIDATION) 
+2026-11-25T12:27:32.2295724Z    Knob: AgentEnablePipelineArtifactLargeChunkSize = true Source: $(AGENT_ENABLE_PIPELINEARTIFACT_LARGE_CHUNK_SIZE) 
+2026-11-25T12:27:32.2297427Z    Knob: ContinueAfterCancelProcessTreeKillAttempt = true Source: $(VSTSAGENT_CONTINUE_AFTER_CANCEL_PROCESSTREEKILL_ATTEMPT) 
+2026-11-25T12:27:32.2297912Z    Knob: ProcessHandlerSecureArguments = true Source: $(AZP_75787_ENABLE_NEW_LOGIC) 
+2026-11-25T12:27:32.2298211Z    Knob: ProcessHandlerSecureArguments = false Source: $(AZP_75787_ENABLE_NEW_LOGIC_LOG) 
+2026-11-25T12:27:32.2298537Z    Knob: ProcessHandlerTelemetry = true Source: $(AZP_75787_ENABLE_COLLECT) 
+2026-11-25T12:27:32.2299099Z    Knob: ProcessHandlerEnableNewLogic = true Source: $(AZP_75787_ENABLE_NEW_PH_LOGIC) 
+2026-11-25T12:27:32.2299771Z    Knob: EnableResourceMonitorDebugOutput = true Source: $(AZP_ENABLE_RESOURCE_MONITOR_DEBUG_OUTPUT) 
+2026-11-25T12:27:32.2300109Z    Knob: EnableResourceUtilizationWarnings = true Source: $(AZP_ENABLE_RESOURCE_UTILIZATION_WARNINGS) 
+2026-11-25T12:27:32.2300660Z    Knob: IgnoreVSTSTaskLib = true Source: $(AZP_AGENT_IGNORE_VSTSTASKLIB) 
+2026-11-25T12:27:32.2300956Z    Knob: FailJobWhenAgentDies = true Source: $(FAIL_JOB_WHEN_AGENT_DIES) 
+2026-11-25T12:27:32.2301166Z    Knob: EnhancedWorkerCrashHandling = true Source: ${AZP_ENHANCED_WORKER_CRASH_HANDLING} 
+2026-11-25T12:27:32.2301572Z    Knob: CheckForTaskDeprecation = true Source: $(AZP_AGENT_CHECK_FOR_TASK_DEPRECATION) 
+2026-11-25T12:27:32.2302016Z    Knob: CheckIfTaskNodeRunnerIsDeprecated246 = True Source: $(DistributedTask.Agent.CheckIfTaskNodeRunnerIsDeprecated246) 
+2026-11-25T12:27:32.2302482Z    Knob: UseNode20ToStartContainer = True Source: $(DistributedTask.Agent.UseNode20ToStartContainer) 
+2026-11-25T12:27:32.2302837Z    Knob: UseNode24ToStartContainer = True Source: $(DistributedTask.Agent.UseNode24ToStartContainer) 
+2026-11-25T12:27:32.2303188Z    Knob: EnableTimeoutLogFlushing = True Source: $(DistributedTask.Agent.EnableTimeoutLogFlushing) 
+2026-11-25T12:27:32.2303684Z    Knob: LogTaskNameInUserAgent = true Source: $(AZP_AGENT_LOG_TASKNAME_IN_USERAGENT) 
+2026-11-25T12:27:32.2304043Z    Knob: UseFetchFilterInCheckoutTask = true Source: $(AGENT_USE_FETCH_FILTER_IN_CHECKOUT_TASK) 
+2026-11-25T12:27:32.2304398Z    Knob: UseFetchFilterInGitSubmoduleUpdate = True Source: $(DistributedTask.Agent.UseFetchFilterInGitSubmoduleUpdate) 
+2026-11-25T12:27:32.2304908Z    Knob: CaseInsensitiveArtifactMatchingFixEnabled = True Source: $(DistributedTask.Agent.CaseInsensitiveArtifactMatchingFixEnabled) 
+2026-11-25T12:27:32.2305351Z    Knob: Rosetta2Warning = true Source: $(ROSETTA2_WARNING) 
+2026-11-25T12:27:32.2306416Z    Knob: AddForceCredentialsToGitCheckoutEnhanced = True Source: $(DistributedTask.Agent.AddForceCredentialsToGitCheckoutEnhanced) 
+2026-11-25T12:27:32.2307163Z    Knob: UseLatestTfExe = True Source: $(DistributedTask.Agent.UseLatestTfExe) 
+2026-11-25T12:27:32.2307501Z    Knob: UseSparseCheckoutInCheckoutTask = true Source: $(AGENT_USE_SPARSE_CHECKOUT_IN_CHECKOUT_TASK) 
+2026-11-25T12:27:32.2308295Z    Knob: AgentCDNConnectivityFailWarning = False Source: $(DistributedTask.Agent.AgentCDNConnectivityFailWarning) 
+2026-11-25T12:27:32.2308691Z    Knob: UseEnhancedLogging = true Source: ${AZP_USE_ENHANCED_LOGGING} 
+2026-11-25T12:27:32.2309044Z    Knob: EnableEnhancedContainerDiagnostics = True Source: $(DistributedTask.Agent.EnableEnhancedContainerDiagnostics) 
+2026-11-25T12:27:32.2309419Z    Knob: EnableDockerExecDiagnostics = True Source: $(DistributedTask.Agent.EnableDockerExecDiagnostics) 
+2026-11-25T12:27:32.2310262Z    Knob: UseEnhancedNodeSelection = True Source: $(DistributedTask.Agent.UseEnhancedNodeSelection) 
+2026-11-25T12:27:32.2311184Z    Knob: EnablePluginExternalOutputFiltering = True Source: $(DistributedTask.Agent.EnablePluginExternalOutputFiltering) 
+2026-11-25T12:27:32.2311388Z Finished checking job knob settings.
+2026-11-25T12:27:32.2728335Z Start tracking orphan processes.
+2026-11-25T12:27:32.2851842Z ##[section]Finishing: Initialize job
+2026-11-25T12:27:32.2939612Z ##[section]Async Command Start: DetectDockerContainer
+2026-11-25T12:27:32.2940457Z ##[section]Async Command End: DetectDockerContainer
+2026-11-25T12:27:32.2941658Z ##[section]Async Command Start: DetectDockerContainer
+2026-11-25T12:27:32.2941937Z ##[section]Async Command End: DetectDockerContainer
+2026-11-25T12:27:32.3135263Z ##[section]Starting: Download SSH key from Secure Files
+2026-11-25T12:27:32.3253411Z ==============================================================================
+2026-11-25T12:27:32.3254347Z Task         : Download secure file
+2026-11-25T12:27:32.3254794Z Description  : Download a secure file to the agent machine
+2026-11-25T12:27:32.3254978Z Version      : 1.281.1
+2026-11-25T12:27:32.3255243Z Author       : Microsoft Corporation
+2026-11-25T12:27:32.3255595Z Help         : https://docs.microsoft.com/azure/devops/pipelines/tasks/utility/download-secure-file
+2026-11-25T12:27:32.3255731Z ==============================================================================
+2026-11-25T12:27:36.1040858Z [Host] Selected Node version: Node24 (Strategy: Node24Strategy)
+2026-11-25T12:27:36.7739874Z ##[section]Finishing: Download SSH key from Secure Files
+2026-11-25T12:27:36.7787310Z ##[section]Starting: Checkout horlartundhey/theepicbook@drill/pipeline-failure to s
+2026-11-25T12:27:36.7801040Z ==============================================================================
+2026-11-25T12:27:36.7801186Z Task         : Get sources
+2026-11-25T12:27:36.7801285Z Description  : Get sources from a repository. Supports Git, TfsVC, and SVN repositories.
+2026-11-25T12:27:36.7801406Z Version      : 1.0.0
+2026-11-25T12:27:36.7801501Z Author       : Microsoft
+2026-11-25T12:27:36.7802051Z Help         : [More Information](https://go.microsoft.com/fwlink/?LinkId=798199)
+2026-11-25T12:27:36.7802174Z ==============================================================================
+2026-11-25T12:27:38.5853378Z Syncing repository: horlartundhey/theepicbook (GitHub)
+2026-11-25T12:27:38.5859870Z ##[command]git version
+2026-11-25T12:27:38.5866320Z git version 2.53.0
+2026-11-25T12:27:38.5867731Z ##[command]git config --get remote.origin.url
+2026-11-25T12:27:38.5876525Z ##[command]git clean -ffdx
+2026-11-25T12:27:38.5883790Z ##[command]git reset --hard HEAD
+2026-11-25T12:27:38.5889109Z HEAD is now at a71eb60 drill: invalid dependency for pipeline-triage assignment (do not merge)
+2026-11-25T12:27:38.5891492Z ##[command]git sparse-checkout disable
+2026-11-25T12:27:38.5910047Z ##[command]git config gc.auto 0
+2026-11-25T12:27:38.5919238Z ##[command]git config core.longpaths true
+2026-11-25T12:27:38.5928328Z ##[command]git config --get-all http.https://github.com/horlartundhey/theepicbook.extraheader
+2026-11-25T12:27:38.5937507Z ##[command]git config --get-all http.extraheader
+2026-11-25T12:27:38.5946835Z ##[command]git config --get-regexp .*extraheader
+2026-11-25T12:27:38.5956107Z ##[command]git config --get-all http.proxy
+2026-11-25T12:27:38.5965727Z ##[command]git config http.version HTTP/1.1
+2026-11-25T12:27:38.5979087Z ##[command]git config --get-all remote.origin.promisor
+2026-11-25T12:27:38.5989176Z ##[command]git config --get-all remote.origin.partialclonefilter
+2026-11-25T12:27:38.6001663Z ##[command]git --config-env=http.extraheader=env_var_http.extraheader fetch --force --tags --prune --prune-tags --progress --no-recurse-submodules origin --depth=1  +14890e3b6f8c96646f09edfc48dfc707091e8ebb:refs/remotes/origin/14890e3b6f8c96646f09edfc48dfc707091e8ebb
+2026-11-25T12:27:38.6008982Z remote: Enumerating objects: 5, done.        
+2026-11-25T12:27:38.6009338Z remote: Counting objects:  20% (1/5)        
+2026-11-25T12:27:38.6009653Z remote: Counting objects:  40% (2/5)        
+2026-11-25T12:27:38.6009980Z remote: Counting objects:  60% (3/5)        
+2026-11-25T12:27:38.6010258Z remote: Counting objects:  80% (4/5)        
+2026-11-25T12:27:38.6010512Z remote: Counting objects: 100% (5/5)        
+2026-11-25T12:27:38.6010825Z remote: Counting objects: 100% (5/5), done.        
+2026-11-25T12:27:38.6011088Z remote: Compressing objects:  50% (1/2)        
+2026-11-25T12:27:38.6011382Z remote: Compressing objects: 100% (2/2)        
+2026-11-25T12:27:38.6011712Z remote: Compressing objects: 100% (2/2), done.        
+2026-11-25T12:27:38.6012045Z remote: Total 3 (delta 2), reused 2 (delta 1), pack-reused 0 (from 0)        
+2026-11-25T12:27:38.6012488Z From https://github.com/horlartundhey/theepicbook
+2026-11-25T12:27:38.6012936Z  * [new ref]         14890e3b6f8c96646f09edfc48dfc707091e8ebb -> origin/14890e3b6f8c96646f09edfc48dfc707091e8ebb
+2026-11-25T12:27:39.8990873Z ##[command]git --config-env=http.extraheader=env_var_http.extraheader fetch --force --tags --prune --prune-tags --progress --no-recurse-submodules origin --depth=1  +14890e3b6f8c96646f09edfc48dfc707091e8ebb
+2026-11-25T12:27:39.9000575Z remote: Total 0 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)        
+2026-11-25T12:27:39.9001022Z From https://github.com/horlartundhey/theepicbook
+2026-11-25T12:27:39.9001490Z  * branch            14890e3b6f8c96646f09edfc48dfc707091e8ebb -> FETCH_HEAD
+2026-11-25T12:27:40.7668122Z ##[command]git checkout --progress --force refs/remotes/origin/14890e3b6f8c96646f09edfc48dfc707091e8ebb
+2026-11-25T12:27:40.7678103Z Previous HEAD position was a71eb60 drill: invalid dependency for pipeline-triage assignment (do not merge)
+2026-11-25T12:27:40.7678708Z HEAD is now at 14890e3 Revert "drill: invalid dependency for pipeline-triage assignment (do not merge)"
+2026-11-25T12:27:40.7707993Z ##[section]Finishing: Checkout horlartundhey/theepicbook@drill/pipeline-failure to s
+2026-11-25T12:27:40.7746842Z ##[section]Starting: Install Node dependencies (npm ci)
+2026-11-25T12:27:40.7753583Z ==============================================================================
+2026-11-25T12:27:40.7753731Z Task         : Command line
+2026-11-25T12:27:40.7753807Z Description  : Run a command line script using Bash on Linux and macOS and cmd.exe on Windows
+2026-11-25T12:27:40.7753936Z Version      : 2.281.0
+2026-11-25T12:27:40.7754012Z Author       : Microsoft Corporation
+2026-11-25T12:27:40.7754107Z Help         : https://docs.microsoft.com/azure/devops/pipelines/tasks/utility/command-line
+2026-11-25T12:27:40.7754232Z ==============================================================================
+2026-11-25T12:27:44.1641854Z [Host] Selected Node version: Node24 (Strategy: Node24Strategy)
+2026-11-25T12:27:44.2653187Z Generating script.
+2026-11-25T12:27:44.2713965Z ========================== Starting Command Output ===========================
+2026-11-25T12:27:44.2913983Z [command]/usr/bin/bash --noprofile --norc /home/ubuntu/myagent/_work/_temp/1ebeb9c8-7bf8-414d-a3fb-18a8ecbfb170.sh
+2026-11-25T12:27:44.2995319Z v22.22.1
+2026-11-25T12:27:45.8869447Z npm WARN deprecated debug@4.1.1: Debug versions >=3.2.0 <3.2.7 || >=4 <4.3.1 have a low-severity ReDos regression when used in a Node.js environment. It is recommended you upgrade to 3.2.7 or 4.3.1. (https://github.com/visionmedia/debug/issues/797)
+2026-11-25T12:27:46.6195543Z 
+2026-11-25T12:27:46.6196953Z added 107 packages in 2s
+2026-11-25T12:27:46.6345365Z 
+2026-11-25T12:27:46.6431039Z ##[section]Finishing: Install Node dependencies (npm ci)
+2026-11-25T12:27:46.6469433Z ##[section]Starting: Restrict key permissions
+2026-11-25T12:27:46.6476366Z ==============================================================================
+2026-11-25T12:27:46.6476496Z Task         : Command line
+2026-11-25T12:27:46.6476583Z Description  : Run a command line script using Bash on Linux and macOS and cmd.exe on Windows
+2026-11-25T12:27:46.6476740Z Version      : 2.281.0
+2026-11-25T12:27:46.6476812Z Author       : Microsoft Corporation
+2026-11-25T12:27:46.6476910Z Help         : https://docs.microsoft.com/azure/devops/pipelines/tasks/utility/command-line
+2026-11-25T12:27:46.6477022Z ==============================================================================
+2026-11-25T12:27:49.9745111Z [Host] Selected Node version: Node24 (Strategy: Node24Strategy)
+2026-11-25T12:27:50.1023373Z Generating script.
+2026-11-25T12:27:50.1026611Z Script contents:
+2026-11-25T12:27:50.1027119Z chmod 600 "/home/ubuntu/myagent/_work/_temp/epicbook-key"
+2026-11-25T12:27:50.1027784Z ========================== Starting Command Output ===========================
+2026-11-25T12:27:50.1040509Z [command]/usr/bin/bash --noprofile --norc /home/ubuntu/myagent/_work/_temp/3e274099-5f1a-477e-8438-dbbdf9ad88b9.sh
+2026-11-25T12:27:50.1289017Z 
+2026-11-25T12:27:50.1364684Z ##[section]Finishing: Restrict key permissions
+2026-11-25T12:27:50.1410897Z ##[section]Starting: Syntax check and SSH connectivity
+2026-11-25T12:27:50.1419029Z ==============================================================================
+2026-11-25T12:27:50.1419250Z Task         : Command line
+2026-11-25T12:27:50.1419381Z Description  : Run a command line script using Bash on Linux and macOS and cmd.exe on Windows
+2026-11-25T12:27:50.1419607Z Version      : 2.281.0
+2026-11-25T12:27:50.1419733Z Author       : Microsoft Corporation
+2026-11-25T12:27:50.1419894Z Help         : https://docs.microsoft.com/azure/devops/pipelines/tasks/utility/command-line
+2026-11-25T12:27:50.1420090Z ==============================================================================
+2026-11-25T12:27:53.5087943Z [Host] Selected Node version: Node24 (Strategy: Node24Strategy)
+2026-11-25T12:27:53.6021767Z Generating script.
+2026-11-25T12:27:53.6025641Z ========================== Starting Command Output ===========================
+2026-11-25T12:27:53.6035146Z [command]/usr/bin/bash --noprofile --norc /home/ubuntu/myagent/_work/_temp/0732e9bc-c6d4-4eb4-bfc4-c92e5ec7bb4b.sh
+2026-11-25T12:27:54.7908021Z Starting galaxy collection install process
+2026-11-25T12:27:54.7911451Z Nothing to do. All requested collections are already installed. If you want to reinstall them, consider using `--force`.
+2026-11-25T12:27:55.6943180Z 
+2026-11-25T12:27:55.6944289Z playbook: ansible/site.yml
+2026-11-25T12:27:58.1584021Z backend_server | SUCCESS => {
+2026-11-25T12:27:58.1588286Z     "changed": false,
+2026-11-25T12:27:58.1588858Z     "ping": "pong"
+2026-11-25T12:27:58.1589409Z }
+2026-11-25T12:27:58.1590296Z app_server | SUCCESS => {
+2026-11-25T12:27:58.1591015Z     "changed": false,
+2026-11-25T12:27:58.1591619Z     "ping": "pong"
+2026-11-25T12:27:58.1613412Z }
+2026-11-25T12:27:58.2513926Z 
+2026-11-25T12:27:58.2593374Z ##[section]Finishing: Syntax check and SSH connectivity
+2026-11-25T12:27:58.2633841Z ##[section]Starting: Checkout horlartundhey/theepicbook@drill/pipeline-failure to s
+2026-11-25T12:27:58.2638148Z ==============================================================================
+2026-11-25T12:27:58.2638277Z Task         : Get sources
+2026-11-25T12:27:58.2638369Z Description  : Get sources from a repository. Supports Git, TfsVC, and SVN repositories.
+2026-11-25T12:27:58.2638499Z Version      : 1.0.0
+2026-11-25T12:27:58.2638572Z Author       : Microsoft
+2026-11-25T12:27:58.2638660Z Help         : [More Information](https://go.microsoft.com/fwlink/?LinkId=798199)
+2026-11-25T12:27:58.2638766Z ==============================================================================
+2026-11-25T12:27:59.4439237Z Cleaning any cached credential from repository: horlartundhey/theepicbook (GitHub)
+2026-11-25T12:27:59.4565844Z ##[section]Finishing: Checkout horlartundhey/theepicbook@drill/pipeline-failure to s
+2026-11-25T12:27:59.4596155Z ##[section]Starting: Finalize Job
+2026-11-25T12:27:59.4610490Z Cleaning up task key
+2026-11-25T12:27:59.4611262Z Start cleaning up orphan processes.
+2026-11-25T12:27:59.5114645Z ##[section]Finishing: Finalize Job
+2026-11-25T12:27:59.5144318Z ##[section]Finishing: validate
+

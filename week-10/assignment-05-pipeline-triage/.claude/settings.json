@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "deny": [
+      "Edit",
+      "Write",
+      "NotebookEdit",
+      "Bash(git:*)",
+      "Bash(az:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Bash(terraform:*)",
+      "Bash(ansible:*)",
+      "Bash(ansible-playbook:*)",
+      "Bash(rm:*)",
+      "Bash(mv:*)",
+      "Bash(cp:*)",
+      "Read(~/.ssh/**)",
+      "Read(~/.azure/**)",
+      "Read(./.env)"
+    ]
+  }
+}
