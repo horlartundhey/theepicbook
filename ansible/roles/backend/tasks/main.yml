@@ -1,0 +1,71 @@
+---
+- name: Add NodeSource repository for Node.js 20
+  ansible.builtin.shell: curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+  args:
+    creates: /usr/bin/node
+
+- name: Install Node.js and MySQL client tools
+  ansible.builtin.apt:
+    name:
+      - nodejs
+      - mysql-client
+    state: present
+    update_cache: true
+
+- name: Create application directory
+  ansible.builtin.file:
+    path: /opt/epicbook
+    state: directory
+    owner: azureuser
+    group: azureuser
+    mode: '0755'
+
+- name: Deploy EpicBook application code
+  ansible.posix.synchronize:
+    src: "{{ playbook_dir }}/../"
+    dest: /opt/epicbook/
+    rsync_opts:
+      - "--exclude=.git"
+      - "--exclude=ansible"
+      - "--exclude=node_modules"
+  notify: Restart epicbook
+
+- name: Ensure application files are owned by azureuser
+  ansible.builtin.file:
+    path: /opt/epicbook
+    owner: azureuser
+    group: azureuser
+    recurse: true
+
+- name: Install Node.js dependencies
+  ansible.builtin.command: npm ci --omit=dev
+  args:
+    chdir: /opt/epicbook
+    creates: /opt/epicbook/node_modules
+  become_user: azureuser
+
+- name: Deploy environment file (contains the DB secret)
+  ansible.builtin.template:
+    src: epicbook.env.j2
+    dest: /etc/epicbook.env
+    owner: root
+    group: root
+    mode: '0600'
+  no_log: true
+  notify: Restart epicbook
+
+- name: Deploy systemd service unit
+  ansible.builtin.template:
+    src: epicbook.service.j2
+    dest: /etc/systemd/system/epicbook.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart epicbook
+
+- name: Enable and start EpicBook service
+  ansible.builtin.systemd:
+    name: epicbook
+    enabled: true
+    state: started
+    daemon_reload: true

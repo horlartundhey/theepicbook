@@ -1,0 +1,15 @@
+[Unit]
+Description=EpicBook Node.js Application
+After=network.target
+
+[Service]
+Type=simple
+User=azureuser
+WorkingDirectory=/opt/epicbook
+EnvironmentFile=/etc/epicbook.env
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
