@@ -2,4 +2,5 @@ backend_private_ip: "10.10.2.4"
 mysql_fqdn: "epicbook-mysql-ec7ad6.mysql.database.azure.com"
 backend_app_port: 3000
 db_name: "bookstore"
-db_user: "epicbookadmin"
+db_admin_username: "epicbookadmin"
+db_admin_password: "{{ lookup('env', 'MYSQL_PASSWORD') }}"
