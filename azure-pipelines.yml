@@ -2,6 +2,9 @@ trigger:
   branches:
     include:
       - main
+  paths:
+    exclude:
+      - week-10/*
 
 pool:
   name: SelfHostedPool
@@ -16,6 +19,10 @@ stages:
       - job: validate
         steps:
           - checkout: self
+          - script: |
+              node --version
+              npm ci --omit=dev --no-audit --no-fund
+            displayName: Install Node dependencies (npm ci)
           - task: DownloadSecureFile@1
             name: sshKey
             displayName: Download SSH key from Secure Files
@@ -34,6 +41,7 @@ stages:
   - stage: Deploy
     displayName: Deploy EpicBook
     dependsOn: Validate
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     jobs:
       - job: deploy
         steps:
