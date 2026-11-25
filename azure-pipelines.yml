@@ -1,19 +1,54 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- main
+  branches:
+    include:
+      - main
 
 pool:
-  vmImage: ubuntu-latest
+  name: SelfHostedPool
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+variables:
+  - group: epicbook-secrets
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+stages:
+  - stage: Validate
+    displayName: Validate Ansible
+    jobs:
+      - job: validate
+        steps:
+          - checkout: self
+          - task: DownloadSecureFile@1
+            name: sshKey
+            displayName: Download SSH key from Secure Files
+            inputs:
+              secureFile: epicbook-key
+          - script: chmod 600 "$(sshKey.secureFilePath)"
+            displayName: Restrict key permissions
+          - script: |
+              ansible-galaxy collection install -r ansible/requirements.yml
+              ansible-playbook -i ansible/inventory/hosts.ini ansible/site.yml --syntax-check
+              ansible -i ansible/inventory/hosts.ini all -m ping --private-key "$(sshKey.secureFilePath)"
+            displayName: Syntax check and SSH connectivity
+            env:
+              ANSIBLE_DEPRECATION_WARNINGS: 'false'
+
+  - stage: Deploy
+    displayName: Deploy EpicBook
+    dependsOn: Validate
+    jobs:
+      - job: deploy
+        steps:
+          - checkout: self
+          - task: DownloadSecureFile@1
+            name: sshKey
+            displayName: Download SSH key from Secure Files
+            inputs:
+              secureFile: epicbook-key
+          - script: chmod 600 "$(sshKey.secureFilePath)"
+            displayName: Restrict key permissions
+          - script: |
+              ansible-playbook -i ansible/inventory/hosts.ini ansible/site.yml --private-key "$(sshKey.secureFilePath)"
+            displayName: Run Ansible playbook
+            env:
+              MYSQL_PASSWORD: $(mysql_admin_password)
+              ANSIBLE_DEPRECATION_WARNINGS: 'false'
+              ANSIBLE_FORCE_COLOR: 'false'
